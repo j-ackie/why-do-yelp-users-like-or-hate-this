@@ -1,6 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
+from bs4 import BeautifulSoup
 
 
 load_dotenv()
@@ -8,10 +9,12 @@ API_KEY = os.getenv('API_KEY')
 
 
 class Review:
-    def __init__(self, review: dict):
-        self.rating = review["rating"]
-        self.url = review["url"]
-        self.text = review["text"]
+    def __init__(self, review):
+        divs = review.find_all("div")
+        for div in divs:
+            if "aria-label" in div.attrs and "star rating" in div.attrs["aria-label"]:
+                self.rating = int(div.attrs["aria-label"][0])
+        self.text = review.find("p", {"class": "comment__09f24__gu0rG css-1sufhje"}).text
 
 
 def search_businesses(search_term: str):
@@ -28,7 +31,7 @@ def search_businesses(search_term: str):
     params = {"term": search_term,
               "location": "New York City"}
     try:
-        result = requests.get(url, headers=headers, params=params, timeout=5)
+        result = requests.get(url, headers=headers, params=params, timeout=10)
         result.raise_for_status()
     except requests.RequestException:
         return None
@@ -36,32 +39,47 @@ def search_businesses(search_term: str):
     return result.json()["businesses"]
 
 # Add bool for if they want to query for specific restaurant or not
-def get_yelp_reviews(search_term: str):
+def get_yelp_reviews(url: str):
     """
     Returns the yelp reviews for a search term
-
-    https://www.yelp.com/developers/documentation/v3/business
-
-    :param search_term:
+    Helper function
+    :param url:
     :return:
     """
-    business_id = search_businesses(search_term)[0]["id"]
-    url = f"https://api.yelp.com/v3/businesses/{business_id}/reviews"
-    headers = {"Authorization": "Bearer {}".format(API_KEY)}
 
+    print("Loading " + url)
     try:
-        result = requests.get(url, headers=headers)
+        result = requests.get(url, timeout=10)
         result.raise_for_status()
     except requests.RequestException:
         return None
 
-    reviews = []
-    result = result.json()["reviews"]
-    for review in result:
-        reviews.append(Review(review))
+    soup = BeautifulSoup(result.content, "html.parser")
 
-    return reviews
+    reviews = soup.find_all("li", {"class": "margin-b5__09f24__pTvws border-color--default__09f24__NPAKY"})
+
+    cleaned_reviews = []
+    for review in reviews:
+        cleaned_reviews.append(Review(review))
+
+    return cleaned_reviews
+
+
+def get_all_yelp_reviews(search_term: str):
+    """
+
+    :param search_term:
+    :return:
+    """
+    all_reviews = []
+    counter = 0
+    while True:
+        reviews = get_yelp_reviews(search_businesses(search_term)[0]["url"] + f"&start={counter}")
+        if len(reviews) == 0:
+            return all_reviews
+        all_reviews.append(reviews)
+        counter += 10
 
 
 if __name__ == "__main__":
-    print(get_yelp_reviews("Ramen")[2].text)
+    print(get_all_yelp_reviews("McDonalds")[0][0].text)
