@@ -144,7 +144,7 @@ def save_freqs(search_term: str, max_depth: int):
     :return:
     """
     freqs = add_text_to_freqs(search_term, max_depth)
-    with open("src/jsons/" + search_businesses(search_term)[0]["alias"] + ".json", 'w') as file_write:
+    with open("jsons/" + search_businesses(search_term)[0]["alias"] + ".json", 'w') as file_write:
         json.dump(freqs, file_write, indent=4)
 
 
@@ -155,11 +155,10 @@ def load_freqs(search_term: str):
     :return:
     """
     name = search_businesses(search_term)[0]["alias"]
-    if os.path.isfile("src/jsons/" + name + ".json"):
-        with open("src/jsons/" + search_businesses(search_term)[0]["alias"] + ".json", 'r') as file_read:
-            freqs_load = json.load(file_read)
-        return freqs_load
-    else:
+    if not os.path.isfile("jsons/" + name + ".json"):
         save_freqs(search_term, 5)
-
-print(load_freqs("Luigi's Pizzeria"))
+    with open("jsons/" + name + ".json", 'r') as file_read:
+        freqs = json.load(file_read)
+        pos_freqs = sorted(freqs["positive"].items(), key=lambda x: x[1], reverse=True)
+        neg_freqs = sorted(freqs["negative"].items(), key=lambda x: x[1], reverse=True)
+        return {"positive": pos_freqs, "negative": neg_freqs}
