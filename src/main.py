@@ -17,6 +17,7 @@ def search_businesses(search_term: str):
     """
     Returns search results for input
 
+    https://www.yelp.com/developers/documentation/v3/business_search
     :param search_term: What user would like to search for
     :return:
     """
@@ -33,5 +34,26 @@ def search_businesses(search_term: str):
     return result.json()
 
 
+def get_yelp_reviews(business_id: str):
+    """
+    Returns the yelp reviews for a particular business
+
+    https://www.yelp.com/developers/documentation/v3/business
+
+    :param business_id:
+    :return:
+    """
+    url = f"https://api.yelp.com/v3/businesses/{business_id}/reviews"
+    headers = {"Authorization": "Bearer {}".format(API_KEY)}
+
+    try:
+        result = requests.get(url, headers=headers)
+        result.raise_for_status()
+    except requests.RequestException:
+        return None
+
+    return result.json()
+
+
 if __name__ == "__main__":
-    print(search_businesses("ramen"))
+    #print(get_yelp_reviews(search_businesses("Ramen")["businesses"][0]["id"]))
