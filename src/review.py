@@ -145,8 +145,21 @@ def save_freqs(search_term: str, max_depth: int):
     """
     freqs = add_text_to_freqs(search_term, max_depth)
     with open("src/jsons/" + search_businesses(search_term)[0]["alias"] + ".json", 'w') as file_write:
-        json.dump(freqs, file_write, indent=4, sort_keys=True)
+        json.dump(freqs, file_write, indent=4)
 
 
+def load_freqs(search_term: str):
+    """
 
-save_freqs("J&M Pizza", 5)
+    :param search_term:
+    :return:
+    """
+    name = search_businesses(search_term)[0]["alias"]
+    if os.path.isfile("src/jsons/" + name + ".json"):
+        with open("src/jsons/" + search_businesses(search_term)[0]["alias"] + ".json", 'r') as file_read:
+            freqs_load = json.load(file_read)
+        return freqs_load
+    else:
+        save_freqs(search_term, 5)
+
+print(load_freqs("Luigi's Pizzeria"))
