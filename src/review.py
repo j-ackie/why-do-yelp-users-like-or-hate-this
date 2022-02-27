@@ -118,21 +118,28 @@ def add_text_to_freqs(search_term: str, max_depth: int):
     pos_freqs = {}
     neg_freqs = {}
     all_review_pages = get_all_yelp_reviews(search_term, max_depth)
-    for review_page in all_review_pages:
-        for review in review_page:
-            tokens = tokenize(review.text)
-            if review.rating >= 4:
+    common_words = []
+    with open("words/words.txt", 'r') as file_read:
+        for line in file_read:
+            common_words.append(line.rstrip("\n"))
+        print(common_words)
+        for review_page in all_review_pages:
+            for review in review_page:
+                tokens = tokenize(review.text)
                 for token in tokens:
-                    if token not in pos_freqs.keys():
-                        pos_freqs[token] = 1
-                    else:
-                        pos_freqs[token] += 1
-            elif review.rating <= 2:
-                for token in tokens:
-                    if token not in neg_freqs.keys():
-                        neg_freqs[token] = 1
-                    else:
-                        neg_freqs[token] += 1
+                    if token in common_words or token == '':
+                        continue
+                    if review.rating >= 4:
+                        if token not in pos_freqs.keys():
+                            pos_freqs[token] = 1
+                        else:
+                            pos_freqs[token] += 1
+                    if review.rating <= 2:
+                        if token not in neg_freqs.keys():
+                            neg_freqs[token] = 1
+                        else:
+                            neg_freqs[token] += 1
+
     return {"positive": pos_freqs, "negative": neg_freqs}
 
 
