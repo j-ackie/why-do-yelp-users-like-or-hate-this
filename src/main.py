@@ -8,14 +8,16 @@ API_KEY = os.getenv('API_KEY')
 
 
 class Review:
-    def __init__(self, rating, text):
-        self.rating = rating
-        self.text = text
+    def __init__(self, review: dict):
+        self.rating = review["rating"]
+        self.url = review["url"]
+        self.text = review["text"]
 
 
 def search_businesses(search_term: str):
     """
     Returns search results for input
+    Helper function for get_yelp_reviews
 
     https://www.yelp.com/developers/documentation/v3/business_search
     :param search_term: What user would like to search for
@@ -31,18 +33,19 @@ def search_businesses(search_term: str):
     except requests.RequestException:
         return None
 
-    return result.json()
+    return result.json()["businesses"]
 
-
-def get_yelp_reviews(business_id: str):
+# Add bool for if they want to query for specific restaurant or not
+def get_yelp_reviews(search_term: str):
     """
-    Returns the yelp reviews for a particular business
+    Returns the yelp reviews for a search term
 
     https://www.yelp.com/developers/documentation/v3/business
 
-    :param business_id:
+    :param search_term:
     :return:
     """
+    business_id = search_businesses(search_term)[0]["id"]
     url = f"https://api.yelp.com/v3/businesses/{business_id}/reviews"
     headers = {"Authorization": "Bearer {}".format(API_KEY)}
 
@@ -52,8 +55,13 @@ def get_yelp_reviews(business_id: str):
     except requests.RequestException:
         return None
 
-    return result.json()
+    reviews = []
+    result = result.json()["reviews"]
+    for review in result:
+        reviews.append(Review(review))
+
+    return reviews
 
 
 if __name__ == "__main__":
-    #print(get_yelp_reviews(search_businesses("Ramen")["businesses"][0]["id"]))
+    print(get_yelp_reviews("Ramen")[2].text)
