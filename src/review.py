@@ -144,7 +144,7 @@ def save_freqs(search_term: str, max_depth: int):
     :return:
     """
     freqs = add_text_to_freqs(search_term, max_depth)
-    with open(search_businesses(search_term)[0]["alias"] + ".json", 'w') as file_write:
+    with open("src/jsons/" + search_businesses(search_term)[0]["alias"] + ".json", 'w') as file_write:
         json.dump(freqs, file_write, indent=4, sort_keys=True)
 
 
