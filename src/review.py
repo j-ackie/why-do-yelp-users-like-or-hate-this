@@ -104,7 +104,7 @@ def tokenize(text: str):
     :param text:
     :return:
     """
-    tokens = [re.sub(r'[^A-Za-z]+', '', s).lower().strip() for s in  text.split()]
+    tokens = [re.sub(r'[^A-Za-z]+', '', s).lower().strip() for s in text.split()]
     return tokens
 
 
