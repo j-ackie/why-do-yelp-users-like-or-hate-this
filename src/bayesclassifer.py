@@ -17,12 +17,12 @@ class BayesClassifier:
                          }
 
     def train(self):
-        with open("jsons/yelp_small_dataset.json", "r") as f:
-            reader = pd.read_json(f, orient="records", lines=True, dtype=self.r_dtypes, chunksize=1000)
-
+        with open("jsons/yelp_academic_dataset_review.json", "r") as f:
+            reader = pd.read_json(f, orient="records", lines=True, dtype=self.r_dtypes,
+                                  chunksize=1000000, nrows=1000000)
             for chunk in reader:
                 reduced_chunk = chunk.drop(columns=['review_id', 'user_id'])
-                self.b_pandas.append(reduced_chunk)
+            self.b_pandas.append(reduced_chunk)
 
         self.b_pandas = pd.concat(self.b_pandas, ignore_index=True)
         for item in self.b_pandas.iterrows():
@@ -31,10 +31,16 @@ class BayesClassifier:
             elif item[1]["stars"] <= 2:
                 add_text_to_frequency_dict(self.neg_freqs, item[1]["text"])
 
-    def save(self, filename):
+    def save(self):
         data = {"positive": self.pos_freqs, "negative": self.neg_freqs}
         with open("jsons/freqs.json", 'w') as file_write:
             json.dump(data, file_write, indent=4, sort_keys=True)
+
+    def load(self):
+        with open("jsons/freqs.json", 'r') as file_read:
+            json_load = json.load(file_read)
+            self.pos_freqs = json_load["positive"]
+            self.neg_freqs = json_load["negative"]
 
     def get_likelihood_of_word(self, word, is_positive):
         if is_positive:
@@ -87,9 +93,10 @@ def get_total_words(freq_dict: dict):
 
 
 a = BayesClassifier()
-a.train()
-print(a.get_prediction("amazing"))
-print(a.neg_freqs)
+a.load()
+# a.train()
+# a.save()
+print(a.get_prediction("SHIT"))
 
 
 
