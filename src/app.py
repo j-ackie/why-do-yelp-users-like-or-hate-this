@@ -13,7 +13,7 @@ def index():
         return redirect(url_for("results", search_term=request.form.get("search_term")))
 
 
-@app.route("/<search_term>")
+@app.route("/<search_term>", methods=["GET", "POST"])
 def results(search_term):
     result = load_freqs(search_term)
     business_name = result[0]
