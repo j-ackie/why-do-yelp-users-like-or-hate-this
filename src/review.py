@@ -1,9 +1,9 @@
-import re
 import requests
 import os
 import json
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
+from bayesclassifier import BayesClassifier, tokenize
 
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
@@ -98,47 +98,39 @@ def get_all_yelp_reviews(search_term: str, max_depth: int):
         counter += 10
 
 
-def tokenize(text: str):
+def add_to_freqs(search_term: str, max_depth: int):
     """
-
-    :param text:
-    :return:
-    """
-    tokens = [re.sub(r'[^A-Za-z]+', '', s).lower().strip() for s in text.split()]
-    return tokens
-
-
-def add_text_to_freqs(search_term: str, max_depth: int):
-    """
-
     :param search_term:
     :param max_depth:
     :return:
     """
+    a = BayesClassifier()
+    a.load()
+
+    with open("words/common-words.txt", 'r') as file_read:
+        common_words = file_read.readlines()
+
+    stripped_common_words = []
+    for word in common_words:
+        stripped_common_words.append(word.rstrip("\n"))
+
     pos_freqs = {}
     neg_freqs = {}
     all_review_pages = get_all_yelp_reviews(search_term, max_depth)
-    common_words = []
-    with open("words/words.txt", 'r') as file_read:
-        for line in file_read:
-            common_words.append(line.rstrip("\n"))
-        print(common_words)
-        for review_page in all_review_pages:
-            for review in review_page:
-                tokens = tokenize(review.text)
-                for token in tokens:
-                    if token in common_words or token == '':
-                        continue
-                    if review.rating >= 4:
-                        if token not in pos_freqs.keys():
-                            pos_freqs[token] = 1
-                        else:
-                            pos_freqs[token] += 1
-                    if review.rating <= 2:
-                        if token not in neg_freqs.keys():
-                            neg_freqs[token] = 1
-                        else:
-                            neg_freqs[token] += 1
+    for review_page in all_review_pages:
+        for review in review_page:
+            tokens = tokenize(review.text)
+            for token in tokens:
+                if a.get_prediction(token) > 0.5 and review.rating >= 4 and token not in stripped_common_words:
+                    if token not in pos_freqs.keys():
+                        pos_freqs[token] = 1
+                    else:
+                        pos_freqs[token] += 1
+                elif a.get_prediction(token) < -0.75 and review.rating <= 2 and token not in stripped_common_words:
+                    if token not in neg_freqs.keys():
+                        neg_freqs[token] = 1
+                    else:
+                        neg_freqs[token] += 1
 
     return {"positive": pos_freqs, "negative": neg_freqs}
 
@@ -150,22 +142,24 @@ def save_freqs(search_term: str, max_depth: int):
     :param max_depth:
     :return:
     """
-    freqs = add_text_to_freqs(search_term, max_depth)
+    freqs = add_to_freqs(search_term, max_depth)
     with open("jsons/" + search_businesses(search_term)[0]["alias"] + ".json", 'w') as file_write:
         json.dump(freqs, file_write, indent=4)
 
 
-def load_freqs(search_term: str):
+def load_freqs(search_term: str, max_depth=5):
     """
 
     :param search_term:
     :return:
     """
+    print(search_businesses(search_term))
     name = search_businesses(search_term)[0]["alias"]
     if not os.path.isfile("jsons/" + name + ".json"):
-        save_freqs(search_term, 5)
+        save_freqs(search_term, max_depth)
     with open("jsons/" + name + ".json", 'r') as file_read:
         freqs = json.load(file_read)
         pos_freqs = sorted(freqs["positive"].items(), key=lambda x: x[1], reverse=True)
         neg_freqs = sorted(freqs["negative"].items(), key=lambda x: x[1], reverse=True)
         return {"positive": pos_freqs, "negative": neg_freqs}
+
