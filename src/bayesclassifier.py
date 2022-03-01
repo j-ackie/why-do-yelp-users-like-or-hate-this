@@ -130,7 +130,3 @@ def get_total_words(freq_dict: dict):
     :return: int: Total number of words in a frequency dictionary
     """
     return sum(freq_dict.values())
-
-a = BayesClassifier()
-a.load()
-print(a.get_prediction("not good"))
