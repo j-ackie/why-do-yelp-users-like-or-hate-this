@@ -1,21 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <h1>Why people like {{ business_name }}</h1>
+{% extends "layout.html" %}
+{% block title %} {{ business_name }} {% endblock %}
+{% block content %}
+    <h1>Why do Yelp users like {{ business_name }}?</h1>
         <ol>
         {% for word in pos_freqs %}
             <li>{{ word[0], word[1] }}</li>
         {% endfor %}
         </ol>
-    <h1>Why people hate {{ business_name }}</h1>
+    <h1>Why do Yelp users dislike {{ business_name }}?</h1>
         <ol>
         {% for word in neg_freqs %}
             <li>{{ word[0], word[1] }}</li>
         {% endfor %}
         </ol>
-</body>
-</html>
+{% endblock %}
