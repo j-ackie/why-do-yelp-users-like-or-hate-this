@@ -150,7 +150,10 @@ def load_freqs(search_term: str, max_depth=5):
     :param search_term:
     :return:
     """
-    top_result = search_businesses(search_term)[0]
+    search = search_businesses(search_term)
+    if len(search) == 0:
+        return None
+    top_result = search[0]
     alias = top_result["alias"]
     name = top_result["name"]
     business_url = top_result["url"]

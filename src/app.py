@@ -17,6 +17,8 @@ def index():
 def results(search_term):
     if request.method == "GET":
         result = load_freqs(search_term)
+        if not result:
+            return render_template("results.html", search_term=search_term, has_results=False)
         business_name = result[0]
         business_url = result[1]
         freqs = result[2]
@@ -30,7 +32,7 @@ def results(search_term):
         else:
             neg_freqs = freqs["negative"][0:10]
         return render_template("results.html", business_name=business_name, business_url=business_url,
-                               pos_freqs=pos_freqs, neg_freqs=neg_freqs)
+                               pos_freqs=pos_freqs, neg_freqs=neg_freqs, has_results=True)
     else:
         return redirect(url_for("results", search_term=request.form.get("search_term")))
 
