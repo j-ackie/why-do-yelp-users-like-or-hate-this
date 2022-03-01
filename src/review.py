@@ -161,4 +161,4 @@ def load_freqs(search_term: str, max_depth=5):
         freqs = json.load(file_read)
         pos_freqs = sorted(freqs["positive"].items(), key=lambda x: x[1], reverse=True)
         neg_freqs = sorted(freqs["negative"].items(), key=lambda x: x[1], reverse=True)
-        return {"positive": pos_freqs, "negative": neg_freqs}
+        return search_businesses(search_term)[0]["name"], {"positive": pos_freqs, "negative": neg_freqs}
