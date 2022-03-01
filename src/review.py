@@ -140,7 +140,7 @@ def save_freqs(search_term: str, max_depth: int, alias: str):
     :return:
     """
     freqs = add_to_freqs(search_term, max_depth)
-    with open("jsons/" + alias + ".json", 'w') as file_write:
+    with open("jsons/businesses" + alias + ".json", 'w') as file_write:
         json.dump(freqs, file_write, indent=4)
 
 
@@ -154,9 +154,9 @@ def load_freqs(search_term: str, max_depth=5):
     alias = top_result["alias"]
     name = top_result["name"]
     business_url = top_result["url"]
-    if not os.path.isfile("jsons/" + alias + ".json"):
+    if not os.path.isfile("jsons/businesses" + alias + ".json"):
         save_freqs(search_term, max_depth, alias)
-    with open("jsons/" + alias + ".json", 'r') as file_read:
+    with open("jsons/businesses" + alias + ".json", 'r') as file_read:
         freqs = json.load(file_read)
         pos_freqs = sorted(freqs["positive"].items(), key=lambda x: x[1], reverse=True)
         neg_freqs = sorted(freqs["negative"].items(), key=lambda x: x[1], reverse=True)
