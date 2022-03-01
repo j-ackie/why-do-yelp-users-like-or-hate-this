@@ -32,5 +32,5 @@ def results(search_term):
         return render_template("results.html", business_name=business_name, business_url=business_url,
                                pos_freqs=pos_freqs, neg_freqs=neg_freqs)
     else:
-        return redirect("/")
+        return redirect(url_for("results", search_term=request.form.get("search_term")))
 
