@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="static/styles.css">
     <title>Why Do Yelp Users Like/Hate {% block title %} {% endblock %}?</title>
 </head>
 <body>
-    {% block content %} {% endblock %}
+    <div class="content">
+        <h1>Why Do Yelp Users Like/Hate {% block name %} {% endblock %}</h1>
+        {% block content %} {% endblock %}
+    </div>
 </body>
 </html>
