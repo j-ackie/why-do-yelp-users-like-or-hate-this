@@ -98,6 +98,3 @@ def negative_measures_of_central_tendency():
 if __name__ == "__main__":
     positive_measures_of_central_tendency()
     negative_measures_of_central_tendency()
-
-
-

@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 {% block title %} {{ business_name }} {% endblock %}
-{% block name %} {{ business_name }} {% endblock %}
+{% block name %} <a href='{{ business_url }}' target='_blank'>{{ business_name }}</a> {% endblock %}
 {% block content %}
-    <h1>Why do Yelp users like {{ business_name }}?</h1>
+    <h1>Yelp users like <a href='{{ business_url }}' target='_blank'>{{ business_name }}</a> because:</h1>
         <ol>
         {% for word in pos_freqs %}
             <li>{{ word[0], word[1] }}</li>
         {% endfor %}
         </ol>
-    <h1>Why do Yelp users dislike {{ business_name }}?</h1>
+    <h1>Yelp users hate <a href='{{ business_url }}' target='_blank'>{{ business_name }}</a> because:</h1>
         <ol>
         {% for word in neg_freqs %}
             <li>{{ word[0], word[1] }}</li>
