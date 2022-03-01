@@ -24,4 +24,4 @@ def index():
         else:
             neg_freqs = freqs["negative"][0:10]
 
-        return render_template("test.html", business_name=business_name, pos_freqs=pos_freqs, neg_freqs=neg_freqs)
+        return render_template("results.html", business_name=business_name, pos_freqs=pos_freqs, neg_freqs=neg_freqs)

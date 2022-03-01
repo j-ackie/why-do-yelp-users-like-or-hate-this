@@ -54,8 +54,6 @@ def get_yelp_reviews(url: str):
     :param url: Yelp url of search term
     :return: List of Review objects for a single page
     """
-
-    print("Loading " + url)
     try:
         result = requests.get(url)
         result.raise_for_status()
@@ -90,10 +88,8 @@ def get_all_yelp_reviews(search_term: str, max_depth: int):
         if counter / 10 > max_depth:
             return all_reviews
         reviews = get_yelp_reviews(search_businesses(search_term)[0]["url"] + f"&start={counter}")
-        print(reviews)
         if len(reviews) == 0:
             return all_reviews
-        print(len(reviews))
         all_reviews.append(reviews)
         counter += 10
 
@@ -153,7 +149,6 @@ def load_freqs(search_term: str, max_depth=5):
     :param search_term:
     :return:
     """
-    print(search_businesses(search_term))
     name = search_businesses(search_term)[0]["alias"]
     if not os.path.isfile("jsons/" + name + ".json"):
         save_freqs(search_term, max_depth)
