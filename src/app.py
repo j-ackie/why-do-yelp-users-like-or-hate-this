@@ -11,5 +11,17 @@ def index():
         return render_template("index.html")
     else:
         search = request.form.get("test")
-        freqs = load_freqs(search)
-        return render_template("test.html", what=freqs["positive"][0])
+        result = load_freqs(search)
+        business_name = result[0]
+        freqs = result[1]
+        if len(freqs["positive"]) < 10:
+            pos_freqs = freqs["positive"][0:len(freqs["positive"])]
+        else:
+            pos_freqs = freqs["positive"][0:10]
+
+        if len(freqs["negative"]) < 10:
+            neg_freqs = freqs["negative"][0:len(freqs["negative"])]
+        else:
+            neg_freqs = freqs["negative"][0:10]
+
+        return render_template("test.html", business_name=business_name, pos_freqs=pos_freqs, neg_freqs=neg_freqs)
