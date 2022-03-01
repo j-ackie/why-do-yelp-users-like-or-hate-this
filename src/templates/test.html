@@ -5,6 +5,17 @@
     <title>Title</title>
 </head>
 <body>
-    {{ what }}
+    <h1>Why people like {{ business_name }}</h1>
+        <ol>
+        {% for word in pos_freqs %}
+            <li>{{ word[0], word[1] }}</li>
+        {% endfor %}
+        </ol>
+    <h1>Why people hate {{ business_name }}</h1>
+        <ol>
+        {% for word in neg_freqs %}
+            <li>{{ word[0], word[1] }}</li>
+        {% endfor %}
+        </ol>
 </body>
 </html>
