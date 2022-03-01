@@ -90,11 +90,12 @@ class BayesClassifier:
         return log_likelihood
 
     def get_prediction(self, text):
-        print(self.get_log_likelihood_of_text(text, True) - self.get_log_likelihood_of_text(text, False))
-        if self.get_log_likelihood_of_text(text, True) >= self.get_log_likelihood_of_text(text, False):
-            return "positive"
-        else:
-            return "negative"
+        return self.get_log_likelihood_of_text(text, True) - self.get_log_likelihood_of_text(text, False)
+
+        #if self.get_log_likelihood_of_text(text, True) >= self.get_log_likelihood_of_text(text, False):
+        #    return "positive"
+        #else:
+        #    return "negative"
 
 
 def tokenize(text: str):
@@ -132,4 +133,4 @@ def get_total_words(freq_dict: dict):
 
 a = BayesClassifier()
 a.load()
-print(a.get_prediction("SHITTY"))
+print(a.get_prediction("not good"))
