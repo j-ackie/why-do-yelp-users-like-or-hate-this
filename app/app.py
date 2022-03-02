@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
-from review import load_freqs
-
+from app.review import load_freqs
 
 app = Flask(__name__)
-
 
 @app.route("/", methods=["GET", "POST"])
 def index():

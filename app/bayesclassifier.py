@@ -22,7 +22,7 @@ class BayesClassifier:
 
         :return: void
         """
-        with open("jsons/yelp_academic_dataset_review.json", "r") as f:
+        with open("app/resources/datasets/yelp_academic_dataset_review.json", "r") as f:
             reader = pd.read_json(f, orient="records", lines=True, dtype=self.r_dtypes,
                                   chunksize=1000000, nrows=1000000)
             for chunk in reader:
@@ -43,7 +43,7 @@ class BayesClassifier:
         :return: void
         """
         data = {"positive": self.pos_freqs, "negative": self.neg_freqs}
-        with open("jsons/freqs.json", 'w') as file_write:
+        with open("app/resources/freqs.json", 'w') as file_write:
             json.dump(data, file_write, indent=4, sort_keys=True)
 
     def load(self):
@@ -52,7 +52,7 @@ class BayesClassifier:
 
         :return: void
         """
-        with open("jsons/freqs.json", 'r') as file_read:
+        with open("app/resources/freqs.json", 'r') as file_read:
             json_load = json.load(file_read)
             self.pos_freqs = json_load["positive"]
             self.neg_freqs = json_load["negative"]
