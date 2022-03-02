@@ -1,12 +1,9 @@
 import requests
 import os
 import json
-from dotenv import load_dotenv
+from config import API_KEY
 from bs4 import BeautifulSoup
 from app.bayesclassifier import BayesClassifier, tokenize
-
-load_dotenv()
-API_KEY = os.getenv('API_KEY')
 
 
 class Review:

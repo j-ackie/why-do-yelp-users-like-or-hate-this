@@ -3,6 +3,7 @@ from app.review import load_freqs
 
 app = Flask(__name__)
 
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
