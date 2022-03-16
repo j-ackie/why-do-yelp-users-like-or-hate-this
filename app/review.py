@@ -26,8 +26,8 @@ def search_businesses(search_term: str):
 
     https://www.yelp.com/developers/documentation/v3/business_search
 
-    :param search_term: What user would like to search for
-    :return: Dictionary containing all the businesses pertaining to search term
+    :param search_term: (str) What user would like to search for
+    :return: (dict) Dictionary containing all the businesses pertaining to search term
     """
     url = "https://api.yelp.com/v3/businesses/search"
     headers = {"Authorization": "Bearer {}".format(API_KEY)}
@@ -48,8 +48,8 @@ def get_yelp_reviews(url: str):
     Returns the yelp reviews on a single page for a search term.
     Helper function for get_all_yelp_reviews.
 
-    :param url: Yelp url of search term
-    :return: List of Review objects for a single page
+    :param url: (str) Yelp url of search term
+    :return: (list) List of Review objects for a single page
     """
     try:
         result = requests.get(url)
@@ -64,7 +64,7 @@ def get_yelp_reviews(url: str):
 
     list_items = soup.find_all("li", {"class": "margin-b5__09f24__pTvws border-color--default__09f24__NPAKY"})
     for li in list_items:
-        p = li.find("p", {"class": "comment__09f24__gu0rG css-1sufhje"})
+        p = li.find("p", {"class": "comment__09f24__gu0rG css-qgunke"})
         if p:
             reviews.append(Review(li, p))
 
@@ -73,11 +73,11 @@ def get_yelp_reviews(url: str):
 
 def get_all_yelp_reviews(search_term: str, max_depth: int):
     """
-    Returns the yelp reviews on every page for a search term
+    Returns the yelp reviews on every page for a search term.
 
-    :param search_term: What user would like to search for
-    :param max_depth:
-    :return: List of Review objects for every page
+    :param search_term: (str) What the user would like to search for
+    :param max_depth: (int) Maximum number of pages
+    :return: (list) List of Review objects for every page
     """
     all_reviews = []
     counter = 0
@@ -93,10 +93,12 @@ def get_all_yelp_reviews(search_term: str, max_depth: int):
 
 def add_to_freqs(search_term: str, max_depth: int):
     """
-    :param search_term:
-    :param max_depth:
-    :return:
-    """
+    Adds the tokens of every review within the max depth to the frequency dictionaries.
+
+    :param search_term: (str) What the user would like to search for
+    :param max_depth: (int) Maximum number of pages
+    :return: (dict) Dictionary containing both positive and negative frequency dictionaries.
+    """ 
     a = BayesClassifier()
     a.load()
 
@@ -130,11 +132,12 @@ def add_to_freqs(search_term: str, max_depth: int):
 
 def save_freqs(search_term: str, max_depth: int, alias: str):
     """
+    Saves the frequency dictionaries in a JSON.
 
-    :param search_term:
-    :param max_depth:
-    :param alias:
-    :return:
+    :param search_term: (str) What the user would like to search for
+    :param max_depth: (int) Maximum number of pages
+    :param alias: (str) Alias of business given from call of Yelp Fusion API
+    :return: (void)
     """
     freqs = add_to_freqs(search_term, max_depth)
     with open("app/resources/businesses-jsons/" + alias + ".json", 'w') as file_write:
@@ -143,9 +146,10 @@ def save_freqs(search_term: str, max_depth: int, alias: str):
 
 def load_freqs(search_term: str, max_depth=5):
     """
+    Loads the frequency dictionaries from a JSON.
 
-    :param search_term:
-    :return:
+    :param search_term: (str) What the user would like to search for
+    :return: (dict) Dictionary containing both positive and negative frequency dictionaries
     """
     search = search_businesses(search_term)
     if len(search) == 0:

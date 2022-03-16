@@ -18,9 +18,9 @@ class BayesClassifier:
 
     def train(self):
         """
-        Adds tokenized text to their respective frequency dictionary
+        Adds tokenized text to their respective frequency dictionary.
 
-        :return: void
+        :return: (void)
         """
         with open("app/resources/datasets/yelp_academic_dataset_review.json", "r") as f:
             reader = pd.read_json(f, orient="records", lines=True, dtype=self.r_dtypes,
@@ -38,9 +38,9 @@ class BayesClassifier:
 
     def save(self):
         """
-        Writes each frequency dictionary onto a single json file
+        Writes each frequency dictionary onto a single JSON.
 
-        :return: void
+        :return: (void)
         """
         data = {"positive": self.pos_freqs, "negative": self.neg_freqs}
         with open("app/resources/freqs.json", 'w') as file_write:
@@ -48,9 +48,10 @@ class BayesClassifier:
 
     def load(self):
         """
-        Reads from json file and loads data about positive and negative frequencies to self.pos_freqs and self.neg_freqs
+        Reads from JSON and loads data about positive and negative frequencies to 
+        self.pos_freqs and self.neg_freqs.
 
-        :return: void
+        :return: (void)
         """
         with open("app/resources/freqs.json", 'r') as file_read:
             json_load = json.load(file_read)
@@ -59,11 +60,11 @@ class BayesClassifier:
 
     def get_likelihood_of_word(self, word: str, is_positive: bool):
         """
-        Returns the probability of a word's appearance in a frequency dictionary
+        Returns the probability of a word's appearance in a frequency dictionary.
 
-        :param word: str
-        :param is_positive: bool
-        :return: float
+        :param word: (str) A word
+        :param is_positive: (bool) Whether to search positive or negative frequency dictionary
+        :return: (float) Probability of word being found in frequency dictionary
         """
         if is_positive:
             if word in self.pos_freqs.keys():
@@ -76,12 +77,13 @@ class BayesClassifier:
             else:
                 return 1 / get_total_words(self.neg_freqs)
 
-    def get_log_likelihood_of_text(self, text, is_positive):
+    def get_log_likelihood_of_text(self, text: str, is_positive: bool):
         """
+        Returns the log likelihood of an entire text's appearance in a frequency dictionary.
 
-        :param text:
-        :param is_positive:
-        :return:
+        :param text: (str) A piece of text
+        :param is_positive:  (bool) Whether to search positive or negative frequency dictionary
+        :return: (float) Log likelihood of word being found in frequency dictionary
         """
         tokens = tokenize(text)
         log_likelihood = 0
@@ -89,7 +91,14 @@ class BayesClassifier:
             log_likelihood += math.log(self.get_likelihood_of_word(token, is_positive))
         return log_likelihood
 
-    def get_prediction(self, text):
+    def get_prediction(self, text: str):
+        """
+        Returns the difference between the log likelihood of a text in positive frequency dictionary 
+        and log likelihood of a text in a negative frequency dictionary.
+
+        :param text: (str) A piece of text
+        :return: (float) Difference between two log likelihoods
+        """
         return self.get_log_likelihood_of_text(text, True) - self.get_log_likelihood_of_text(text, False)
 
         #if self.get_log_likelihood_of_text(text, True) >= self.get_log_likelihood_of_text(text, False):
@@ -100,20 +109,22 @@ class BayesClassifier:
 
 def tokenize(text: str):
     """
+    Divides a piece of text into tokens.
 
-    :param text:
-    :return:
+    :param text: (str) A piece of text
+    :return: (list) List of tokens
     """
     tokens = [re.sub(r'[^A-Za-z]+', '', s).lower().strip() for s in text.split()]
     return tokens
 
 
-def add_text_to_frequency_dict(freq_dict, text):
+def add_text_to_frequency_dict(freq_dict: dict, text: str):
     """
+    Adds the tokens of a text to a frequency dictionary.
 
-    :param freq_dict:
-    :param text:
-    :return:
+    :param freq_dict: (dict) A frequency dictionary
+    :param text: (str) A piece of text
+    :return: (void)
     """
     tokens = tokenize(text)
     for token in tokens:
@@ -125,8 +136,9 @@ def add_text_to_frequency_dict(freq_dict, text):
 
 def get_total_words(freq_dict: dict):
     """
+    Gets the total number of words in a frequency dictionary.
 
-    :param freq_dict:
-    :return: int: Total number of words in a frequency dictionary
+    :param freq_dict: (dict) A frequency dictionary
+    :return: (int) Total number of words in a frequency dictionary
     """
     return sum(freq_dict.values())

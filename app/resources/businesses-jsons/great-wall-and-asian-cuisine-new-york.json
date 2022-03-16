@@ -1,0 +1,8 @@
+{
+    "positive": {},
+    "negative": {
+        "grubhub": 1,
+        "refund": 1,
+        "someone": 1
+    }
+}
